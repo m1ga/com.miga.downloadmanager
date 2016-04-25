@@ -1,0 +1,18 @@
+%define lookup-function-name lookupGeneratedInit
+%define class-name TiDownloadmanagerBindings
+%{
+
+#include <string.h>
+#include <v8.h>
+#include <KrollBindings.h>
+
+#include "com.miga.downloadmanager.TiDownloadmanagerModule.h"
+#include "com.miga.downloadmanager.ExampleProxy.h"
+
+
+%}
+struct titanium::bindings::BindEntry;
+%%
+com.miga.downloadmanager.TiDownloadmanagerModule, ::com::miga::downloadmanager::TiDownloadmanagerModule::bindProxy, ::com::miga::downloadmanager::TiDownloadmanagerModule::dispose
+com.miga.downloadmanager.ExampleProxy, ::com::miga::downloadmanager::tidownloadmanager::ExampleProxy::bindProxy, ::com::miga::downloadmanager::tidownloadmanager::ExampleProxy::dispose
+%%
