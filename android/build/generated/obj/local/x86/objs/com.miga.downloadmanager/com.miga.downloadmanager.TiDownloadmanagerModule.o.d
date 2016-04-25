@@ -59,7 +59,6 @@
  /home/miga/.titanium/mobilesdk/linux/5.2.2.GA/android/native/include/ProxyFactory.h \
  /home/miga/.titanium/mobilesdk/linux/5.2.2.GA/android/native/include/TypeConverter.h \
  /home/miga/.titanium/mobilesdk/linux/5.2.2.GA/android/native/include/V8Util.h \
- jni/com.miga.downloadmanager.ExampleProxy.h \
  /home/miga/.titanium/mobilesdk/linux/5.2.2.GA/android/native/include/org.appcelerator.kroll.KrollModule.h \
  /home/miga/.titanium/mobilesdk/linux/5.2.2.GA/android/native/include/Proxy.h
 
@@ -180,8 +179,6 @@ jni/com.miga.downloadmanager.TiDownloadmanagerModule.h:
 /home/miga/.titanium/mobilesdk/linux/5.2.2.GA/android/native/include/TypeConverter.h:
 
 /home/miga/.titanium/mobilesdk/linux/5.2.2.GA/android/native/include/V8Util.h:
-
-jni/com.miga.downloadmanager.ExampleProxy.h:
 
 /home/miga/.titanium/mobilesdk/linux/5.2.2.GA/android/native/include/org.appcelerator.kroll.KrollModule.h:
 

@@ -10,12 +10,11 @@
 #include <KrollBindings.h>
 
 #include "com.miga.downloadmanager.TiDownloadmanagerModule.h"
-#include "com.miga.downloadmanager.ExampleProxy.h"
 
 
-#line 14 "/tmp/miga/ti.downloadmanager-generated/KrollGeneratedBindings.gperf"
+#line 13 "/tmp/miga/ti.downloadmanager-generated/KrollGeneratedBindings.gperf"
 struct titanium::bindings::BindEntry;
-/* maximum key range = 12, duplicates = 0 */
+/* maximum key range = 1, duplicates = 0 */
 
 class TiDownloadmanagerBindings
 {
@@ -29,7 +28,7 @@ inline /*ARGSUSED*/
 unsigned int
 TiDownloadmanagerBindings::hash (register const char *str, register unsigned int len)
 {
-  return len;
+  return 0;
 }
 
 struct titanium::bindings::BindEntry *
@@ -37,25 +36,16 @@ TiDownloadmanagerBindings::lookupGeneratedInit (register const char *str, regist
 {
   enum
     {
-      TOTAL_KEYWORDS = 2,
-      MIN_WORD_LENGTH = 37,
+      TOTAL_KEYWORDS = 1,
+      MIN_WORD_LENGTH = 48,
       MAX_WORD_LENGTH = 48,
-      MIN_HASH_VALUE = 37,
-      MAX_HASH_VALUE = 48
+      MIN_HASH_VALUE = 0,
+      MAX_HASH_VALUE = 0
     };
 
   static struct titanium::bindings::BindEntry wordlist[] =
     {
-      {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-      {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-      {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-      {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-      {""},
-#line 17 "/tmp/miga/ti.downloadmanager-generated/KrollGeneratedBindings.gperf"
-      {"com.miga.downloadmanager.ExampleProxy", ::com::miga::downloadmanager::tidownloadmanager::ExampleProxy::bindProxy, ::com::miga::downloadmanager::tidownloadmanager::ExampleProxy::dispose},
-      {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-      {""},
-#line 16 "/tmp/miga/ti.downloadmanager-generated/KrollGeneratedBindings.gperf"
+#line 15 "/tmp/miga/ti.downloadmanager-generated/KrollGeneratedBindings.gperf"
       {"com.miga.downloadmanager.TiDownloadmanagerModule", ::com::miga::downloadmanager::TiDownloadmanagerModule::bindProxy, ::com::miga::downloadmanager::TiDownloadmanagerModule::dispose}
     };
 
@@ -73,5 +63,5 @@ TiDownloadmanagerBindings::lookupGeneratedInit (register const char *str, regist
     }
   return 0;
 }
-#line 18 "/tmp/miga/ti.downloadmanager-generated/KrollGeneratedBindings.gperf"
+#line 16 "/tmp/miga/ti.downloadmanager-generated/KrollGeneratedBindings.gperf"
 

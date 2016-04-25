@@ -20,7 +20,6 @@
 
 
 
-#include "com.miga.downloadmanager.ExampleProxy.h"
 
 #include "org.appcelerator.kroll.KrollModule.h"
 
@@ -91,7 +90,6 @@ Handle<FunctionTemplate> TiDownloadmanagerModule::getProxyTemplate()
 
 	// Method bindings --------------------------------------------------------
 	DEFINE_PROTOTYPE_METHOD(proxyTemplate, "startDownload", TiDownloadmanagerModule::startDownload);
-	DEFINE_PROTOTYPE_METHOD(proxyTemplate, "example", TiDownloadmanagerModule::example);
 
 	Local<ObjectTemplate> prototypeTemplate = proxyTemplate->PrototypeTemplate();
 	Local<ObjectTemplate> instanceTemplate = proxyTemplate->InstanceTemplate();
@@ -103,10 +101,6 @@ Handle<FunctionTemplate> TiDownloadmanagerModule::getProxyTemplate()
 	// Constants --------------------------------------------------------------
 
 	// Dynamic properties -----------------------------------------------------
-	instanceTemplate->SetAccessor(String::NewSymbol("exampleProp"),
-			TiDownloadmanagerModule::getter_exampleProp
-			, TiDownloadmanagerModule::setter_exampleProp
-, Handle<Value>(), DEFAULT);
 
 	// Accessors --------------------------------------------------------------
 
@@ -181,177 +175,8 @@ Handle<Value> TiDownloadmanagerModule::startDownload(const Arguments& args)
 	return v8::Undefined();
 
 }
-Handle<Value> TiDownloadmanagerModule::example(const Arguments& args)
-{
-	LOGD(TAG, "example()");
-	HandleScope scope;
-
-	JNIEnv *env = titanium::JNIScope::getEnv();
-	if (!env) {
-		return titanium::JSException::GetJNIEnvironmentError();
-	}
-	static jmethodID methodID = NULL;
-	if (!methodID) {
-		methodID = env->GetMethodID(TiDownloadmanagerModule::javaClass, "example", "()Ljava/lang/String;");
-		if (!methodID) {
-			const char *error = "Couldn't find proxy method 'example' with signature '()Ljava/lang/String;'";
-			LOGE(TAG, error);
-				return titanium::JSException::Error(error);
-		}
-	}
-
-	titanium::Proxy* proxy = titanium::Proxy::unwrap(args.Holder());
-
-	jvalue* jArguments = 0;
-
-	jobject javaProxy = proxy->getJavaObject();
-	jstring jResult = (jstring)env->CallObjectMethodA(javaProxy, methodID, jArguments);
-
-
-
-	if (!JavaObject::useGlobalRefs) {
-		env->DeleteLocalRef(javaProxy);
-	}
-
-
-
-	if (env->ExceptionCheck()) {
-		Handle<Value> jsException = titanium::JSException::fromJavaException();
-		env->ExceptionClear();
-		return jsException;
-	}
-
-	if (jResult == NULL) {
-		return Null();
-	}
-
-	Handle<Value> v8Result = titanium::TypeConverter::javaStringToJsString(env, jResult);
-
-	env->DeleteLocalRef(jResult);
-
-
-	return v8Result;
-
-}
 
 // Dynamic property accessors -------------------------------------------------
-
-Handle<Value> TiDownloadmanagerModule::getter_exampleProp(Local<String> property, const AccessorInfo& info)
-{
-	LOGD(TAG, "get exampleProp");
-	HandleScope scope;
-
-	JNIEnv *env = titanium::JNIScope::getEnv();
-	if (!env) {
-		return titanium::JSException::GetJNIEnvironmentError();
-	}
-	static jmethodID methodID = NULL;
-	if (!methodID) {
-		methodID = env->GetMethodID(TiDownloadmanagerModule::javaClass, "getExampleProp", "()Ljava/lang/String;");
-		if (!methodID) {
-			const char *error = "Couldn't find proxy method 'getExampleProp' with signature '()Ljava/lang/String;'";
-			LOGE(TAG, error);
-				return titanium::JSException::Error(error);
-		}
-	}
-
-	titanium::Proxy* proxy = titanium::Proxy::unwrap(info.Holder());
-
-	if (!proxy) {
-		return Undefined();
-	}
-
-	jvalue* jArguments = 0;
-
-	jobject javaProxy = proxy->getJavaObject();
-	jstring jResult = (jstring)env->CallObjectMethodA(javaProxy, methodID, jArguments);
-
-
-
-	if (!JavaObject::useGlobalRefs) {
-		env->DeleteLocalRef(javaProxy);
-	}
-
-
-
-	if (env->ExceptionCheck()) {
-		Handle<Value> jsException = titanium::JSException::fromJavaException();
-		env->ExceptionClear();
-		return jsException;
-	}
-
-	if (jResult == NULL) {
-		return Null();
-	}
-
-	Handle<Value> v8Result = titanium::TypeConverter::javaStringToJsString(env, jResult);
-
-	env->DeleteLocalRef(jResult);
-
-
-	return v8Result;
-
-}
-
-void TiDownloadmanagerModule::setter_exampleProp(Local<String> property, Local<Value> value, const AccessorInfo& info)
-{
-	LOGD(TAG, "set exampleProp");
-	HandleScope scope;
-
-	JNIEnv *env = titanium::JNIScope::getEnv();
-	if (!env) {
-		LOGE(TAG, "Failed to get environment, exampleProp wasn't set");
-		return;
-	}
-
-	static jmethodID methodID = NULL;
-	if (!methodID) {
-		methodID = env->GetMethodID(TiDownloadmanagerModule::javaClass, "setExampleProp", "(Ljava/lang/String;)V");
-		if (!methodID) {
-			const char *error = "Couldn't find proxy method 'setExampleProp' with signature '(Ljava/lang/String;)V'";
-			LOGE(TAG, error);
-		}
-	}
-
-	titanium::Proxy* proxy = titanium::Proxy::unwrap(info.Holder());
-	if (!proxy) {
-		return;
-	}
-
-	jvalue jArguments[1];
-
-	
-	
-	if (!value->IsNull()) {
-		Local<Value> arg_0 = value;
-		jArguments[0].l =
-			titanium::TypeConverter::jsValueToJavaString(env, arg_0);
-	} else {
-		jArguments[0].l = NULL;
-	}
-
-	jobject javaProxy = proxy->getJavaObject();
-	env->CallVoidMethodA(javaProxy, methodID, jArguments);
-
-	if (!JavaObject::useGlobalRefs) {
-		env->DeleteLocalRef(javaProxy);
-	}
-
-
-
-				env->DeleteLocalRef(jArguments[0].l);
-
-
-	if (env->ExceptionCheck()) {
-		titanium::JSException::fromJavaException();
-		env->ExceptionClear();
-	}
-
-
-
-
-}
-
 
 
 		} // downloadmanager

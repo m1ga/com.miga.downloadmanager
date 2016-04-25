@@ -162,8 +162,7 @@
  /home/miga/tools/android-ndk/sources/cxx-stl/stlport/stlport/assert.h \
  /home/miga/tools/android-ndk/platforms/android-3/arch-arm/usr/include/../include/assert.h \
  /home/miga/.titanium/mobilesdk/linux/5.2.2.GA/android/native/include/EventEmitter.h \
- /home/miga/.titanium/mobilesdk/linux/5.2.2.GA/android/native/include/NativeObject.h \
- jni/com.miga.downloadmanager.ExampleProxy.h
+ /home/miga/.titanium/mobilesdk/linux/5.2.2.GA/android/native/include/NativeObject.h
 
 /home/miga/tools/android-ndk/platforms/android-3/arch-arm/usr/include/jni.h:
 
@@ -492,5 +491,3 @@ jni/com.miga.downloadmanager.TiDownloadmanagerModule.h:
 /home/miga/.titanium/mobilesdk/linux/5.2.2.GA/android/native/include/EventEmitter.h:
 
 /home/miga/.titanium/mobilesdk/linux/5.2.2.GA/android/native/include/NativeObject.h:
-
-jni/com.miga.downloadmanager.ExampleProxy.h:
