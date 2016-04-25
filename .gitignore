@@ -1,0 +1,11 @@
+.DS_Store
+build
+.svn
+tmp
+bin
+*.zip
+.apt_generated
+libs
+build.properties
+*.swp
+aliases
