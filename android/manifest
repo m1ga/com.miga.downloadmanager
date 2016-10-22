@@ -2,9 +2,9 @@
 # this is your module manifest and used by Titanium
 # during compilation, packaging, distribution, etc.
 #
-version: 1.0.0
-apiversion: 2
-architectures: armeabi armeabi-v7a x86
+version: 1.1.0
+apiversion: 3
+architectures: armeabi-v7a x86
 description: Use the Android DownloadManager in Titanium
 author: Michael Gangolf
 license: Specify your license
@@ -15,4 +15,4 @@ name: ti.downloadmanager
 moduleid: com.miga.downloadmanager
 guid: 76b6335c-caa6-48bc-876f-4db0b526e202
 platform: android
-minsdk: 5.1.0.GA
+minsdk: 6.0.0
