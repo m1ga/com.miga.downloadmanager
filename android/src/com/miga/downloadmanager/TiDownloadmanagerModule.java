@@ -26,6 +26,9 @@ import android.content.IntentFilter;
 import org.appcelerator.kroll.KrollFunction;
 import java.util.HashMap;
 import android.content.Intent;
+import android.database.Cursor;
+import java.io.File;
+import java.util.ArrayList;
 
 @Kroll.module(name="TiDownloadmanager", id="com.miga.downloadmanager")
 public class TiDownloadmanagerModule extends KrollModule {
@@ -44,11 +47,11 @@ public class TiDownloadmanagerModule extends KrollModule {
 		ServiceReceiver service = new ServiceReceiver(this);		
 		activity.registerReceiver(service, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 		activity.registerReceiver(service, new IntentFilter(DownloadManager.ACTION_NOTIFICATION_CLICKED));
+		dMgr = (DownloadManager) appContext.getSystemService(appContext.DOWNLOAD_SERVICE);
 	}
 
 	@Kroll.onAppCreate
 	public static void onAppCreate(TiApplication app) {
-		
 	}
 
 	// Methods
@@ -65,24 +68,59 @@ public class TiDownloadmanagerModule extends KrollModule {
 			callback.call(getKrollObject(), event);
 		}
 	}
-	
+
 	public void cancel() {
 		Intent pageView = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
 		pageView.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		appContext.startActivity(pageView);
 	}
-	
-	public void startDownloadManager(KrollDict dict) {        
-        dMgr = (DownloadManager) appContext.getSystemService(appContext.DOWNLOAD_SERVICE);
-        DownloadManager.Request dmReq = new DownloadManager.Request(Uri.parse(TiConvert.toString(dict, "url")));
-        dmReq.setTitle( TiConvert.toString(dict, "title")  );
-        dmReq.setDescription(TiConvert.toString(dict, "description") );
+
+	public void startDownloadManager(KrollDict dict) {
+		DownloadManager.Request dmReq = new DownloadManager.Request(Uri.parse(TiConvert.toString(dict, "url")));
+		dmReq.setTitle( TiConvert.toString(dict, "title")  );
+		dmReq.setDescription(TiConvert.toString(dict, "description") );
 		
 		Log.i(LCAT,"Download to " + TiConvert.toString(dict, "filename"));
 		TiBaseFile file = TiFileFactory.createTitaniumFile(new String[] { TiConvert.toString(dict, "filename") }, false);
-        dmReq.setDestinationUri(Uri.fromFile(file.getNativeFile()));
+		dmReq.setDestinationUri(Uri.fromFile(file.getNativeFile()));
 		dMgr.enqueue(dmReq);
-        
- 	}
+	}
+
+	// Methods
+	@Kroll.method
+	public Object[] getDownloads() {
+		ArrayList<HashMap> downList = new ArrayList<HashMap>();
+		
+		DownloadManager.Query query = new DownloadManager.Query();
+		if (dMgr == null){
+			dMgr = (DownloadManager) appContext.getSystemService(appContext.DOWNLOAD_SERVICE);
+			return downList.toArray();
+		}
+
+		Cursor c = dMgr.query(query);
+		c.moveToFirst();
+		while (c.moveToNext()) {
+			HashMap<String, Object> dl = new HashMap<String, Object>();
+
+			String filename = null;
+			String downloadFileLocalUri = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+			if (downloadFileLocalUri != null) {
+				File mFile = new File(Uri.parse(downloadFileLocalUri).getPath());
+				filename = mFile.getAbsolutePath();
+		    }
+
+			int bytes_downloaded = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+			int bytes_total = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+
+			dl.put("status",c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS)));
+			dl.put("filename", filename);
+			dl.put("size_total", bytes_total);
+			dl.put("size_downloaded", bytes_downloaded);
+
+			downList.add(dl);
+		}
+		c.close();
+		return downList.toArray();
+	}
 
 }

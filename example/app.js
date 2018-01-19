@@ -11,6 +11,8 @@ dmg.startDownload({
     description: "Download " + filename
 });
 
+dmg.getDownloads();
+
 function onDone(){
 	alert("done");
 }
