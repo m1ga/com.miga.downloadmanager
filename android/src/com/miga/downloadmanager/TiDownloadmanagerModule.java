@@ -48,25 +48,35 @@ public class TiDownloadmanagerModule extends KrollModule {
 
 	@Kroll.constant
 	public static int COLUMN_REASON_PAUSED_WAITING_TO_RETRY = DownloadManager.PAUSED_WAITING_TO_RETRY;
+		@Kroll.constant
+	public final static int STATUS_FAILED = DownloadManager.STATUS_FAILED;
 	@Kroll.constant
-	public static String COLUMN_BYTES_DOWNLOADED_SO_FAR = DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR;
+	public final static int STATUS_PAUSED = DownloadManager.STATUS_PAUSED;
 	@Kroll.constant
-	public static String COLUMN_DESCRIPTION = DownloadManager.COLUMN_DESCRIPTION;
+	public final static int STATUS_PENDING = DownloadManager.STATUS_PENDING;
 	@Kroll.constant
-	public static String COLUMN_ID = DownloadManager.COLUMN_ID;
+	public final static int STATUS_RUNNING = DownloadManager.STATUS_RUNNING;
+	@Kroll.constant
+	public final static int STATUS_SUCCESSFUL = DownloadManager.STATUS_SUCCESSFUL;
 
+	public final static int STATUS_ALL = 0;
+	/*
 	@Kroll.constant
-	public static String COLUMN_LAST_MODIFIED_TIMESTAMP = DownloadManager.COLUMN_LAST_MODIFIED_TIMESTAMP;
-	@SuppressWarnings("deprecation")
+	public final static String COLUMN_BYTES_DOWNLOADED_SO_FAR = DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR;
 	@Kroll.constant
-	public static String COLUMN_LOCAL_FILENAME = DownloadManager.COLUMN_LOCAL_FILENAME;
-
+	public final static String COLUMN_DESCRIPTION = DownloadManager.COLUMN_DESCRIPTION;
 	@Kroll.constant
-	public static String COLUMN_LOCAL_URI = DownloadManager.COLUMN_LOCAL_URI;
+	public final static String COLUMN_ID = DownloadManager.COLUMN_ID;
 	@Kroll.constant
-	public static String COLUMN_MEDIA_TYPE = DownloadManager.COLUMN_MEDIA_TYPE;
+	public final static String COLUMN_LAST_MODIFIED_TIMESTAMP = DownloadManager.COLUMN_LAST_MODIFIED_TIMESTAMP;
 	@Kroll.constant
-	public static String COLUMN_MEDIAPROVIDER_URI = DownloadManager.COLUMN_MEDIAPROVIDER_URI;
+	public final static String COLUMN_LOCAL_FILENAME = DownloadManager.COLUMN_LOCAL_FILENAME;
+	@Kroll.constant
+	public final static String COLUMN_LOCAL_URI = DownloadManager.COLUMN_LOCAL_URI;
+	@Kroll.constant
+	public final static String COLUMN_MEDIA_TYPE = DownloadManager.COLUMN_MEDIA_TYPE;
+	@Kroll.constant
+	public final static String COLUMN_MEDIAPROVIDER_URI = DownloadManager.COLUMN_MEDIAPROVIDER_URI;
 	@Kroll.constant
 	public final static String COLUMN_REASON = DownloadManager.COLUMN_REASON;
 	@Kroll.constant
@@ -77,18 +87,9 @@ public class TiDownloadmanagerModule extends KrollModule {
 	public final static String COLUMN_TOTAL_SIZE_BYTES = DownloadManager.COLUMN_TOTAL_SIZE_BYTES;
 	@Kroll.constant
 	public final static String COLUMN_URI = DownloadManager.COLUMN_URI;
-	@Kroll.constant
-	public final static int STATUS_FAILED = DownloadManager.STATUS_FAILED;
-	@Kroll.constant
-	public final static int STATUS_PAUSED = DownloadManager.STATUS_PAUSED;
-	@Kroll.constant
-	public final static int STATUS_PENDING = DownloadManager.STATUS_PENDING;
-	@Kroll.constant
-	public final static int STATUS_RUNNING = DownloadManager.STATUS_RUNNING;
-	@Kroll.constant
-	public final static int STATUS_SUCCESSFUL = DownloadManager.STATUS_SUCCESSFUL;
-	public final static int STATUS_ALL = 0;
-
+*/
+	
+	
 	private TiApplication appContext = TiApplication.getInstance();
 	private Activity activity = appContext.getCurrentActivity();
 
@@ -208,7 +209,7 @@ public class TiDownloadmanagerModule extends KrollModule {
 		return downList.toArray();
 	}
 
-	private void done() {
+	 public void done() {
 		if (callback != null) {
 			HashMap<String, String> event = new HashMap<String, String>();
 			// event.put("something","something");
@@ -216,7 +217,7 @@ public class TiDownloadmanagerModule extends KrollModule {
 		}
 	}
 
-	private void cancel() {
+	public void cancel() {
 		Intent pageView = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
 		pageView.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		appContext.startActivity(pageView);
