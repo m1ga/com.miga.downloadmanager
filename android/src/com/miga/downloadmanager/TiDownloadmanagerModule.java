@@ -97,7 +97,8 @@ public class TiDownloadmanagerModule extends KrollModule {
 
 	private DownloadManager dMgr;
 	private KrollFunction callback;
-	private int allowedNetworkTypes = ConnectivityManager.TYPE_MOBILE | ConnectivityManager.TYPE_WIFI | ConnectivityManager.TYPE_VPN;
+	private int allowedNetworkTypes = ConnectivityManager.TYPE_MOBILE | ConnectivityManager.TYPE_WIFI
+			| ConnectivityManager.TYPE_VPN;
 
 	public TiDownloadmanagerModule() {
 		super();
@@ -172,6 +173,11 @@ public class TiDownloadmanagerModule extends KrollModule {
 	public Object[] getSuccessfulDownloads() {
 		return _getDownloads(DownloadManager.STATUS_SUCCESSFUL);
 	}
+	
+	@Kroll.method
+	public int getStatusOfDownload(String url) {
+		return 0; // TODO
+	}
 
 	private Object[] _getDownloads(int status) {
 		@SuppressWarnings("rawtypes")
@@ -238,7 +244,7 @@ public class TiDownloadmanagerModule extends KrollModule {
 		DownloadManager.Request dmReq = new DownloadManager.Request(Uri.parse(TiConvert.toString(dict, "url")));
 		dmReq.setTitle(TiConvert.toString(dict, "title"));
 		dmReq.setDescription(TiConvert.toString(dict, "description"));
-		
+
 		if (dict.containsKeyAndNotNull(ALLOWED_NETWORK_TYPES)) {
 			dmReq.setAllowedNetworkTypes(dict.getInt(ALLOWED_NETWORK_TYPES));
 		} else {

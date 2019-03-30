@@ -10,6 +10,8 @@ var dmg = require("com.miga.downloadmanager");
 var filename = url.substring(url.lastIndexOf('/') + 1);
 var file = Ti.Filesystem.getFile(Ti.Filesystem.externalStorageDirectory, filename).nativePath;
 
+dmg.setAllowedNetworks(Ti.Network.NETWORK_WIFI)
+
 dmg.startDownload({
     url: url,
     filename: file,
@@ -17,6 +19,15 @@ dmg.startDownload({
     title: "Download",
     description: "Download " + filename
 });
+
+dmg.getAllDownloads();
+dmg.getPendingDownloads();
+dmg.getFailedDownloads();
+dmg.getPausedDownloads();
+dmg.getRunningDownloads();
+dmg.getSuccessfulDownloads();
+dmg.getStatusOfDownload(url);
+
 
 function onDone(){
 	alert("done");
