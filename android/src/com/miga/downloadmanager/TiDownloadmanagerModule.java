@@ -30,21 +30,64 @@ import android.database.Cursor;
 import java.io.File;
 import java.util.ArrayList;
 
-@Kroll.module(name="TiDownloadmanager", id="com.miga.downloadmanager")
+@Kroll.module(name = "TiDownloadmanager", id = "com.miga.downloadmanager")
 public class TiDownloadmanagerModule extends KrollModule {
 
 	// Standard Debugging variables
 	private static final String LCAT = "TiDownloadmanagerModule";
 	private static final boolean DBG = TiConfig.LOGD;
+
+	@Kroll.constant
+	public static int COLUMN_REASON_PAUSED_QUEUED_FOR_WIFI = DownloadManager.PAUSED_QUEUED_FOR_WIFI;
+
+	@Kroll.constant
+	public static int COLUMN_REASON_PAUSED_UNKNOWN = DownloadManager.PAUSED_UNKNOWN;
+
+	@Kroll.constant
+	public static int COLUMN_REASON_PAUSED_WAITING_FOR_NETWORK = DownloadManager.PAUSED_WAITING_FOR_NETWORK;
+
+	@Kroll.constant
+	public static int COLUMN_REASON_PAUSED_WAITING_TO_RETRY = DownloadManager.PAUSED_WAITING_TO_RETRY;
+	@Kroll.constant
+	public static String COLUMN_BYTES_DOWNLOADED_SO_FAR = DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR;
+	@Kroll.constant
+	public static String COLUMN_DESCRIPTION = DownloadManager.COLUMN_DESCRIPTION;
+	@Kroll.constant
+	public static String COLUMN_ID = DownloadManager.COLUMN_ID;
+
+	@Kroll.constant
+	public static String COLUMN_LAST_MODIFIED_TIMESTAMP = DownloadManager.COLUMN_LAST_MODIFIED_TIMESTAMP;
+	@SuppressWarnings("deprecation")
+	@Kroll.constant
+	public static String COLUMN_LOCAL_FILENAME = DownloadManager.COLUMN_LOCAL_FILENAME;
+
+	@Kroll.constant
+	public static String COLUMN_LOCAL_URI = DownloadManager.COLUMN_LOCAL_URI;
+	@Kroll.constant
+	public static String COLUMN_MEDIA_TYPE = DownloadManager.COLUMN_MEDIA_TYPE;
+	@Kroll.constant
+	public static String COLUMN_MEDIAPROVIDER_URI = DownloadManager.COLUMN_MEDIAPROVIDER_URI;
+	@Kroll.constant
+	public final  static String COLUMN_REASON = DownloadManager.COLUMN_REASON;
+	@Kroll.constant
+	public final  static String COLUMN_STATUS = DownloadManager.COLUMN_STATUS;
+	@Kroll.constant
+	public final  static String COLUMN_TITLE = DownloadManager.COLUMN_TITLE;
+	@Kroll.constant
+	public final static String COLUMN_TOTAL_SIZE_BYTES = DownloadManager.COLUMN_TOTAL_SIZE_BYTES;
+	@Kroll.constant
+	public final static String COLUMN_URI = DownloadManager.COLUMN_URI;
+
+	
 	private TiApplication appContext = TiApplication.getInstance();
 	private Activity activity = appContext.getCurrentActivity();
 
 	private DownloadManager dMgr;
 	private KrollFunction callback;
-	
+
 	public TiDownloadmanagerModule() {
 		super();
-		ServiceReceiver service = new ServiceReceiver(this);		
+		ServiceReceiver service = new ServiceReceiver(this);
 		activity.registerReceiver(service, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 		activity.registerReceiver(service, new IntentFilter(DownloadManager.ACTION_NOTIFICATION_CLICKED));
 		dMgr = (DownloadManager) appContext.getSystemService(appContext.DOWNLOAD_SERVICE);
@@ -57,14 +100,14 @@ public class TiDownloadmanagerModule extends KrollModule {
 	// Methods
 	@Kroll.method
 	public void startDownload(KrollDict dict) {
-		callback =(KrollFunction) dict.get("success");
+		callback = (KrollFunction) dict.get("success");
 		startDownloadManager(dict);
 	}
 
 	public void done() {
-		if (callback!=null){
-			HashMap<String,String> event = new HashMap<String, String>();
-			//event.put("something","something");
+		if (callback != null) {
+			HashMap<String, String> event = new HashMap<String, String>();
+			// event.put("something","something");
 			callback.call(getKrollObject(), event);
 		}
 	}
@@ -77,11 +120,12 @@ public class TiDownloadmanagerModule extends KrollModule {
 
 	public void startDownloadManager(KrollDict dict) {
 		DownloadManager.Request dmReq = new DownloadManager.Request(Uri.parse(TiConvert.toString(dict, "url")));
-		dmReq.setTitle( TiConvert.toString(dict, "title")  );
-		dmReq.setDescription(TiConvert.toString(dict, "description") );
-		
-		Log.i(LCAT,"Download to " + TiConvert.toString(dict, "filename"));
-		TiBaseFile file = TiFileFactory.createTitaniumFile(new String[] { TiConvert.toString(dict, "filename") }, false);
+		dmReq.setTitle(TiConvert.toString(dict, "title"));
+		dmReq.setDescription(TiConvert.toString(dict, "description"));
+
+		Log.i(LCAT, "Download to " + TiConvert.toString(dict, "filename"));
+		TiBaseFile file = TiFileFactory.createTitaniumFile(new String[] { TiConvert.toString(dict, "filename") },
+				false);
 		dmReq.setDestinationUri(Uri.fromFile(file.getNativeFile()));
 		dMgr.enqueue(dmReq);
 	}
@@ -90,9 +134,9 @@ public class TiDownloadmanagerModule extends KrollModule {
 	@Kroll.method
 	public Object[] getDownloads() {
 		ArrayList<HashMap> downList = new ArrayList<HashMap>();
-		
+
 		DownloadManager.Query query = new DownloadManager.Query();
-		if (dMgr == null){
+		if (dMgr == null) {
 			dMgr = (DownloadManager) appContext.getSystemService(appContext.DOWNLOAD_SERVICE);
 			return downList.toArray();
 		}
@@ -107,12 +151,12 @@ public class TiDownloadmanagerModule extends KrollModule {
 			if (downloadFileLocalUri != null) {
 				File mFile = new File(Uri.parse(downloadFileLocalUri).getPath());
 				filename = mFile.getAbsolutePath();
-		    }
+			}
 
 			int bytes_downloaded = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
 			int bytes_total = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
 
-			dl.put("status",c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS)));
+			dl.put("status", c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS)));
 			dl.put("filename", filename);
 			dl.put("size_total", bytes_total);
 			dl.put("size_downloaded", bytes_downloaded);
