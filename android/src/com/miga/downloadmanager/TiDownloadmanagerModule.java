@@ -68,30 +68,40 @@ public class TiDownloadmanagerModule extends KrollModule {
 	@Kroll.constant
 	public static String COLUMN_MEDIAPROVIDER_URI = DownloadManager.COLUMN_MEDIAPROVIDER_URI;
 	@Kroll.constant
-	public final  static String COLUMN_REASON = DownloadManager.COLUMN_REASON;
+	public final static String COLUMN_REASON = DownloadManager.COLUMN_REASON;
 	@Kroll.constant
-	public final  static String COLUMN_STATUS = DownloadManager.COLUMN_STATUS;
+	public final static String COLUMN_STATUS = DownloadManager.COLUMN_STATUS;
 	@Kroll.constant
-	public final  static String COLUMN_TITLE = DownloadManager.COLUMN_TITLE;
+	public final static String COLUMN_TITLE = DownloadManager.COLUMN_TITLE;
 	@Kroll.constant
 	public final static String COLUMN_TOTAL_SIZE_BYTES = DownloadManager.COLUMN_TOTAL_SIZE_BYTES;
 	@Kroll.constant
 	public final static String COLUMN_URI = DownloadManager.COLUMN_URI;
+	@Kroll.constant
+	public final static int STATUS_FAILED = DownloadManager.STATUS_FAILED;
+	@Kroll.constant
+	public final static int STATUS_PAUSED = DownloadManager.STATUS_PAUSED;
+	@Kroll.constant
+	public final static int STATUS_PENDING = DownloadManager.STATUS_PENDING;
+	@Kroll.constant
+	public final static int STATUS_RUNNING = DownloadManager.STATUS_RUNNING;
+	@Kroll.constant
+	public final static int STATUS_SUCCESSFUL = DownloadManager.STATUS_SUCCESSFUL;
+	public final static int STATUS_ALL = 0;
 
-	
 	private TiApplication appContext = TiApplication.getInstance();
 	private Activity activity = appContext.getCurrentActivity();
 
 	private DownloadManager dMgr;
 	private KrollFunction callback;
-	
+
 	public TiDownloadmanagerModule() {
 		super();
 		ServiceReceiver service = new ServiceReceiver(this);
 		activity.registerReceiver(service, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 		activity.registerReceiver(service, new IntentFilter(DownloadManager.ACTION_NOTIFICATION_CLICKED));
 		dMgr = (DownloadManager) appContext.getSystemService(appContext.DOWNLOAD_SERVICE);
-		
+
 	}
 
 	@Kroll.onAppCreate
@@ -102,28 +112,62 @@ public class TiDownloadmanagerModule extends KrollModule {
 	@Kroll.method
 	public void startDownload(KrollDict dict) {
 		callback = (KrollFunction) dict.get("success");
-		startDownloadManager(dict);
+		_startDownload(dict);
 	}
-	
+
 	@Kroll.method
 	public void remove(String id) {
-		DownloadManager.Query query = new DownloadManager.Query();
-		
+		_remove(id);
 	}
+
 	@Kroll.method
 	public String getMaxBytesOverMobile() {
-		return ""+DownloadManager.getMaxBytesOverMobile(appContext);
+		return "" + DownloadManager.getMaxBytesOverMobile(appContext);
 	}
+
 	@Kroll.method
 	public String getRecommendedMaxBytesOverMobile() {
-		return ""+DownloadManager.getRecommendedMaxBytesOverMobile(appContext);
+		return "" + DownloadManager.getRecommendedMaxBytesOverMobile(appContext);
 	}
-	
-	
+
+	@Kroll.method
+	public Object[] getAllDownloads() {
+		return _getDownloads(0);
+	}
+
 	@Kroll.method
 	public Object[] getDownloads() {
-		ArrayList<HashMap> downList = new ArrayList<HashMap>();
+		return _getDownloads(0);
+	}
 
+	@Kroll.method
+	public Object[] getPendingDownloads() {
+		return _getDownloads(DownloadManager.STATUS_PENDING);
+	}
+
+	@Kroll.method
+	public Object[] getFailedDownloads() {
+		return _getDownloads(DownloadManager.STATUS_FAILED);
+	}
+
+	@Kroll.method
+	public Object[] getPausedDownloads() {
+		return _getDownloads(DownloadManager.STATUS_PAUSED);
+	}
+
+	@Kroll.method
+	public Object[] getRunningDownloads() {
+		return _getDownloads(DownloadManager.STATUS_RUNNING);
+	}
+
+	@Kroll.method
+	public Object[] getSuccessfulDownloads() {
+		return _getDownloads(DownloadManager.STATUS_SUCCESSFUL);
+	}
+
+	private Object[] _getDownloads(int status) {
+		@SuppressWarnings("rawtypes")
+		ArrayList<HashMap> downList = new ArrayList<HashMap>();
 		DownloadManager.Query query = new DownloadManager.Query();
 		if (dMgr == null) {
 			dMgr = (DownloadManager) appContext.getSystemService(appContext.DOWNLOAD_SERVICE);
@@ -149,12 +193,21 @@ public class TiDownloadmanagerModule extends KrollModule {
 			dl.put("filename", filename);
 			dl.put("size_total", bytes_total);
 			dl.put("size_downloaded", bytes_downloaded);
+			dl.put("reason", c.getInt(c.getColumnIndex(DownloadManager.COLUMN_REASON)));
+			dl.put("title", c.getString(c.getColumnIndex(DownloadManager.COLUMN_TITLE)));
+			dl.put("mediatype", c.getString(c.getColumnIndex(DownloadManager.COLUMN_MEDIA_TYPE)));
+			if (status == STATUS_ALL) {
+				downList.add(dl);
+			}
+			if (status == c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS))) {
+				downList.add(dl);
+			}
 
-			downList.add(dl);
 		}
 		c.close();
 		return downList.toArray();
 	}
+
 	private void done() {
 		if (callback != null) {
 			HashMap<String, String> event = new HashMap<String, String>();
@@ -168,12 +221,22 @@ public class TiDownloadmanagerModule extends KrollModule {
 		pageView.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		appContext.startActivity(pageView);
 	}
-
-	private void startDownloadManager(KrollDict dict) {
+	private void _remove(String id) {
+		
+	}
+	private void _startDownload(KrollDict dict) {
 		DownloadManager.Request dmReq = new DownloadManager.Request(Uri.parse(TiConvert.toString(dict, "url")));
 		dmReq.setTitle(TiConvert.toString(dict, "title"));
 		dmReq.setDescription(TiConvert.toString(dict, "description"));
-
+		if (dict.containsKeyAndNotNull("allowedNetworkTypes")) {
+			dmReq.setAllowedNetworkTypes(dict.getInt("allowedNetworkTypes"));
+		}
+		if (dict.containsKeyAndNotNull("allowedOverMetered")) {
+			dmReq.setAllowedOverMetered(dict.getBoolean("allowedOverMetered"));
+		}
+		if (dict.containsKeyAndNotNull("allowedOverRoaming")) {
+			dmReq.setAllowedOverRoaming(dict.getBoolean("allowedOverRoaming"));
+		}
 		Log.i(LCAT, "Download to " + TiConvert.toString(dict, "filename"));
 		TiBaseFile file = TiFileFactory.createTitaniumFile(new String[] { TiConvert.toString(dict, "filename") },
 				false);
