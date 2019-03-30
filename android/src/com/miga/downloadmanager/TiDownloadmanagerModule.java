@@ -60,7 +60,25 @@ public class TiDownloadmanagerModule extends KrollModule {
 	public static final int STATUS_RUNNING = DownloadManager.STATUS_RUNNING;
 	@Kroll.constant
 	public static final int STATUS_SUCCESSFUL = DownloadManager.STATUS_SUCCESSFUL;
-
+	@Kroll.constant
+	public static final int ERROR_CANNOT_RESUME = DownloadManager.ERROR_CANNOT_RESUME;
+	@Kroll.constant
+	public static final int ERROR_DEVICE_NOT_FOUND = DownloadManager.ERROR_DEVICE_NOT_FOUND;
+	@Kroll.constant
+	public static final int ERROR_FILE_ALREADY_EXISTS = DownloadManager.ERROR_FILE_ALREADY_EXISTS;
+	@Kroll.constant
+	public static final int ERROR_FILE_ERROR = DownloadManager.ERROR_FILE_ERROR;
+	@Kroll.constant
+	public static final int ERROR_HTTP_DATA_ERROR = DownloadManager.ERROR_HTTP_DATA_ERROR;
+	@Kroll.constant
+	public static final int ERROR_INSUFFICIENT_SPACE = DownloadManager.ERROR_INSUFFICIENT_SPACE;
+	@Kroll.constant
+	public static final int ERROR_TOO_MANY_REDIRECTS = DownloadManager.ERROR_TOO_MANY_REDIRECTS;
+	@Kroll.constant
+	public static final int ERROR_UNHANDLED_HTTP_CODE = DownloadManager.ERROR_UNHANDLED_HTTP_CODE;
+	@Kroll.constant
+	public static final int ERROR_UNKNOWN = DownloadManager.ERROR_UNKNOWN;
+	
 	public static final int STATUS_ALL = 0;
 
 	@Kroll.constant
@@ -173,10 +191,27 @@ public class TiDownloadmanagerModule extends KrollModule {
 	public Object[] getSuccessfulDownloads() {
 		return _getDownloads(DownloadManager.STATUS_SUCCESSFUL);
 	}
-	
+
 	@Kroll.method
-	public int getStatusOfDownload(String url) {
-		return 0; // TODO
+	public KrollDict getStatusOfDownload(String url) {
+		KrollDict res = new KrollDict();
+
+		DownloadManager.Query query = new DownloadManager.Query();
+		if (dMgr == null) {
+			res.put("error", "no DownloadManager");
+			return res;
+		}
+		Cursor c = dMgr.query(query);
+		c.moveToFirst();
+		while (c.moveToNext()) {
+			if (url.equals(c.getString(c.getColumnIndex(DownloadManager.COLUMN_URI)))) {
+				res.put("status", c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS)));
+			}
+		}
+		if (res.containsKey("status"))
+			res.put("error", "url not in DownloadManager");
+		c.close();
+		return res;
 	}
 
 	private Object[] _getDownloads(int status) {
