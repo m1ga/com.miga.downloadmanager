@@ -9,6 +9,8 @@
 package com.miga.downloadmanager;
 
 import org.appcelerator.kroll.KrollModule;
+
+import android.net.ConnectivityManager;
 import org.appcelerator.kroll.annotations.Kroll;
 
 import org.appcelerator.titanium.TiApplication;
@@ -48,53 +50,54 @@ public class TiDownloadmanagerModule extends KrollModule {
 
 	@Kroll.constant
 	public static int COLUMN_REASON_PAUSED_WAITING_TO_RETRY = DownloadManager.PAUSED_WAITING_TO_RETRY;
-		@Kroll.constant
-	public final static int STATUS_FAILED = DownloadManager.STATUS_FAILED;
 	@Kroll.constant
-	public final static int STATUS_PAUSED = DownloadManager.STATUS_PAUSED;
+	public static final int STATUS_FAILED = DownloadManager.STATUS_FAILED;
 	@Kroll.constant
-	public final static int STATUS_PENDING = DownloadManager.STATUS_PENDING;
+	public static final int STATUS_PAUSED = DownloadManager.STATUS_PAUSED;
 	@Kroll.constant
-	public final static int STATUS_RUNNING = DownloadManager.STATUS_RUNNING;
+	public static final int STATUS_PENDING = DownloadManager.STATUS_PENDING;
 	@Kroll.constant
-	public final static int STATUS_SUCCESSFUL = DownloadManager.STATUS_SUCCESSFUL;
+	public static final int STATUS_RUNNING = DownloadManager.STATUS_RUNNING;
+	@Kroll.constant
+	public static final int STATUS_SUCCESSFUL = DownloadManager.STATUS_SUCCESSFUL;
 
-	public final static int STATUS_ALL = 0;
-	/*
+	public static final int STATUS_ALL = 0;
+
 	@Kroll.constant
-	public final static String COLUMN_BYTES_DOWNLOADED_SO_FAR = DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR;
+	public static final String COLUMN_BYTES_DOWNLOADED_SO_FAR = DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR;
 	@Kroll.constant
-	public final static String COLUMN_DESCRIPTION = DownloadManager.COLUMN_DESCRIPTION;
+	public static final String COLUMN_DESCRIPTION = DownloadManager.COLUMN_DESCRIPTION;
 	@Kroll.constant
-	public final static String COLUMN_ID = DownloadManager.COLUMN_ID;
+	public static final String COLUMN_ID = DownloadManager.COLUMN_ID;
 	@Kroll.constant
-	public final static String COLUMN_LAST_MODIFIED_TIMESTAMP = DownloadManager.COLUMN_LAST_MODIFIED_TIMESTAMP;
+	public static final String COLUMN_LAST_MODIFIED_TIMESTAMP = DownloadManager.COLUMN_LAST_MODIFIED_TIMESTAMP;
 	@Kroll.constant
-	public final static String COLUMN_LOCAL_FILENAME = DownloadManager.COLUMN_LOCAL_FILENAME;
+	public static final String COLUMN_LOCAL_FILENAME = DownloadManager.COLUMN_LOCAL_FILENAME;
 	@Kroll.constant
-	public final static String COLUMN_LOCAL_URI = DownloadManager.COLUMN_LOCAL_URI;
+	public static final String COLUMN_LOCAL_URI = DownloadManager.COLUMN_LOCAL_URI;
 	@Kroll.constant
-	public final static String COLUMN_MEDIA_TYPE = DownloadManager.COLUMN_MEDIA_TYPE;
+	public static final String COLUMN_MEDIA_TYPE = DownloadManager.COLUMN_MEDIA_TYPE;
 	@Kroll.constant
-	public final static String COLUMN_MEDIAPROVIDER_URI = DownloadManager.COLUMN_MEDIAPROVIDER_URI;
+	public static final String COLUMN_MEDIAPROVIDER_URI = DownloadManager.COLUMN_MEDIAPROVIDER_URI;
 	@Kroll.constant
-	public final static String COLUMN_REASON = DownloadManager.COLUMN_REASON;
+	public static final String COLUMN_REASON = DownloadManager.COLUMN_REASON;
 	@Kroll.constant
-	public final static String COLUMN_STATUS = DownloadManager.COLUMN_STATUS;
+	public static final String COLUMN_STATUS = DownloadManager.COLUMN_STATUS;
 	@Kroll.constant
-	public final static String COLUMN_TITLE = DownloadManager.COLUMN_TITLE;
+	public static final String COLUMN_TITLE = DownloadManager.COLUMN_TITLE;
 	@Kroll.constant
-	public final static String COLUMN_TOTAL_SIZE_BYTES = DownloadManager.COLUMN_TOTAL_SIZE_BYTES;
+	public static final String COLUMN_TOTAL_SIZE_BYTES = DownloadManager.COLUMN_TOTAL_SIZE_BYTES;
 	@Kroll.constant
-	public final static String COLUMN_URI = DownloadManager.COLUMN_URI;
-*/
-	
-	
+	public static final String COLUMN_URI = DownloadManager.COLUMN_URI;
+	@Kroll.constant
+	public static final String ALLOWED_NETWORK_TYPES = "allowedNetworkTypes";
+
 	private TiApplication appContext = TiApplication.getInstance();
 	private Activity activity = appContext.getCurrentActivity();
 
 	private DownloadManager dMgr;
 	private KrollFunction callback;
+	private int allowedNetworkTypes = ConnectivityManager.TYPE_MOBILE | ConnectivityManager.TYPE_WIFI | ConnectivityManager.TYPE_VPN;
 
 	public TiDownloadmanagerModule() {
 		super();
@@ -102,7 +105,6 @@ public class TiDownloadmanagerModule extends KrollModule {
 		activity.registerReceiver(service, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 		activity.registerReceiver(service, new IntentFilter(DownloadManager.ACTION_NOTIFICATION_CLICKED));
 		dMgr = (DownloadManager) appContext.getSystemService(appContext.DOWNLOAD_SERVICE);
-
 	}
 
 	@Kroll.onAppCreate
@@ -114,6 +116,11 @@ public class TiDownloadmanagerModule extends KrollModule {
 	public void startDownload(KrollDict dict) {
 		callback = (KrollFunction) dict.get("success");
 		_startDownload(dict);
+	}
+
+	@Kroll.method
+	public void setAllowedNetworkTypes(int allowedNetworkTypes) {
+		this.allowedNetworkTypes = allowedNetworkTypes;
 	}
 
 	@Kroll.method
@@ -209,7 +216,7 @@ public class TiDownloadmanagerModule extends KrollModule {
 		return downList.toArray();
 	}
 
-	 public void done() {
+	public void done() {
 		if (callback != null) {
 			HashMap<String, String> event = new HashMap<String, String>();
 			// event.put("something","something");
@@ -222,15 +229,20 @@ public class TiDownloadmanagerModule extends KrollModule {
 		pageView.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		appContext.startActivity(pageView);
 	}
+
 	private void _remove(String id) {
-		
+
 	}
+
 	private void _startDownload(KrollDict dict) {
 		DownloadManager.Request dmReq = new DownloadManager.Request(Uri.parse(TiConvert.toString(dict, "url")));
 		dmReq.setTitle(TiConvert.toString(dict, "title"));
 		dmReq.setDescription(TiConvert.toString(dict, "description"));
-		if (dict.containsKeyAndNotNull("allowedNetworkTypes")) {
-			dmReq.setAllowedNetworkTypes(dict.getInt("allowedNetworkTypes"));
+		
+		if (dict.containsKeyAndNotNull(ALLOWED_NETWORK_TYPES)) {
+			dmReq.setAllowedNetworkTypes(dict.getInt(ALLOWED_NETWORK_TYPES));
+		} else {
+			dmReq.setAllowedNetworkTypes(allowedNetworkTypes);
 		}
 		if (dict.containsKeyAndNotNull("allowedOverMetered")) {
 			dmReq.setAllowedOverMetered(dict.getBoolean("allowedOverMetered"));
