@@ -20,7 +20,6 @@ public class ServiceReceiver extends BroadcastReceiver {
 			_module.done();
 		} else if (DownloadManager.ACTION_NOTIFICATION_CLICKED.equals(action)) {
 			_module.cancel();
-
 		}
 	}
 

@@ -84,13 +84,14 @@ public class TiDownloadmanagerModule extends KrollModule {
 
 	private DownloadManager dMgr;
 	private KrollFunction callback;
-
+	
 	public TiDownloadmanagerModule() {
 		super();
 		ServiceReceiver service = new ServiceReceiver(this);
 		activity.registerReceiver(service, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 		activity.registerReceiver(service, new IntentFilter(DownloadManager.ACTION_NOTIFICATION_CLICKED));
 		dMgr = (DownloadManager) appContext.getSystemService(appContext.DOWNLOAD_SERVICE);
+		
 	}
 
 	@Kroll.onAppCreate
@@ -103,34 +104,22 @@ public class TiDownloadmanagerModule extends KrollModule {
 		callback = (KrollFunction) dict.get("success");
 		startDownloadManager(dict);
 	}
-
-	public void done() {
-		if (callback != null) {
-			HashMap<String, String> event = new HashMap<String, String>();
-			// event.put("something","something");
-			callback.call(getKrollObject(), event);
-		}
+	
+	@Kroll.method
+	public void remove(String id) {
+		DownloadManager.Query query = new DownloadManager.Query();
+		
 	}
-
-	public void cancel() {
-		Intent pageView = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
-		pageView.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		appContext.startActivity(pageView);
+	@Kroll.method
+	public String getMaxBytesOverMobile() {
+		return ""+DownloadManager.getMaxBytesOverMobile(appContext);
 	}
-
-	public void startDownloadManager(KrollDict dict) {
-		DownloadManager.Request dmReq = new DownloadManager.Request(Uri.parse(TiConvert.toString(dict, "url")));
-		dmReq.setTitle(TiConvert.toString(dict, "title"));
-		dmReq.setDescription(TiConvert.toString(dict, "description"));
-
-		Log.i(LCAT, "Download to " + TiConvert.toString(dict, "filename"));
-		TiBaseFile file = TiFileFactory.createTitaniumFile(new String[] { TiConvert.toString(dict, "filename") },
-				false);
-		dmReq.setDestinationUri(Uri.fromFile(file.getNativeFile()));
-		dMgr.enqueue(dmReq);
+	@Kroll.method
+	public String getRecommendedMaxBytesOverMobile() {
+		return ""+DownloadManager.getRecommendedMaxBytesOverMobile(appContext);
 	}
-
-	// Methods
+	
+	
 	@Kroll.method
 	public Object[] getDownloads() {
 		ArrayList<HashMap> downList = new ArrayList<HashMap>();
@@ -165,6 +154,31 @@ public class TiDownloadmanagerModule extends KrollModule {
 		}
 		c.close();
 		return downList.toArray();
+	}
+	private void done() {
+		if (callback != null) {
+			HashMap<String, String> event = new HashMap<String, String>();
+			// event.put("something","something");
+			callback.call(getKrollObject(), event);
+		}
+	}
+
+	private void cancel() {
+		Intent pageView = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
+		pageView.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		appContext.startActivity(pageView);
+	}
+
+	private void startDownloadManager(KrollDict dict) {
+		DownloadManager.Request dmReq = new DownloadManager.Request(Uri.parse(TiConvert.toString(dict, "url")));
+		dmReq.setTitle(TiConvert.toString(dict, "title"));
+		dmReq.setDescription(TiConvert.toString(dict, "description"));
+
+		Log.i(LCAT, "Download to " + TiConvert.toString(dict, "filename"));
+		TiBaseFile file = TiFileFactory.createTitaniumFile(new String[] { TiConvert.toString(dict, "filename") },
+				false);
+		dmReq.setDestinationUri(Uri.fromFile(file.getNativeFile()));
+		dMgr.enqueue(dmReq);
 	}
 
 }
