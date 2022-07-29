@@ -8,3 +8,5 @@ libs
 build.properties
 *.swp
 aliases
+android/build/
+android/.gradle/
