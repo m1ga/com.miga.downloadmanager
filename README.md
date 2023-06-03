@@ -15,7 +15,8 @@ dmg.startDownload({
     filename: file,
     success: onDone,
     title: "Download",
-    description: "Download " + filename
+    description: "Download " + filename,
+    target: "downloads" // podcasts, documents, downloads (default)
 });
 
 function onDone(){
