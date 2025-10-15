@@ -44,8 +44,8 @@ public class TiDownloadmanagerModule extends KrollModule {
     public TiDownloadmanagerModule() {
         super();
         ServiceReceiver service = new ServiceReceiver(this);
-        activity.registerReceiver(service, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-        activity.registerReceiver(service, new IntentFilter(DownloadManager.ACTION_NOTIFICATION_CLICKED));
+        activity.registerReceiver(service, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE), Context.RECEIVER_NOT_EXPORTED);
+        activity.registerReceiver(service, new IntentFilter(DownloadManager.ACTION_NOTIFICATION_CLICKED), Context.RECEIVER_NOT_EXPORTED);
         dMgr = (DownloadManager) appContext.getSystemService(Context.DOWNLOAD_SERVICE);
     }
 
@@ -87,6 +87,8 @@ public class TiDownloadmanagerModule extends KrollModule {
             dmReq.setDestinationInExternalPublicDir(Environment.DIRECTORY_PODCASTS, filename);
         } else if (targetFolder == "documents") {
             dmReq.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOCUMENTS, filename);
+        } else if (targetFolder == "images") {
+            dmReq.setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, filename);
         } else {
             dmReq.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
         }
