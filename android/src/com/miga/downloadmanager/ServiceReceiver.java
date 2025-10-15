@@ -14,7 +14,7 @@ public class ServiceReceiver extends BroadcastReceiver {
     }
 
     @Override
-    public void onReceive(Context ctxt, Intent intent) {
+    public void onReceive(Context _ct, Intent intent) {
         String action = intent.getAction();
         if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
             _module.done();
