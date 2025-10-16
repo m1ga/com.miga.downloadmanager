@@ -84,16 +84,15 @@ public class TiDownloadmanagerModule extends KrollModule {
 
         Log.d(LCAT, "Download to " + filename);
         TiBaseFile file = TiFileFactory.createTitaniumFile(new String[]{}, false);
-        if (targetFolder.equals("podcasts")) {
+        if ("podcasts".equals(targetFolder)) {
             dmReq.setDestinationInExternalPublicDir(Environment.DIRECTORY_PODCASTS, filename);
-        } else if (targetFolder.equals("documents")) {
+        } else if ("documents".equals(targetFolder)) {
             dmReq.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOCUMENTS, filename);
-        } else if (targetFolder.equals("images")) {
+        } else if ("images".equals(targetFolder)) {
             dmReq.setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, filename);
         } else {
             dmReq.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
         }
-        // dmReq.setDestinationUri(Uri.fromFile(file.getNativeFile()));
         dMgr.enqueue(dmReq);
     }
 
